@@ -1,5 +1,5 @@
 
-arch: umask usergroups
+arch: umask usergroups wheel
 
 ubuntu: usergroups-ubuntu ubuntu-xxx
 	add-apt-repository ppa:moonsdad/ppa
@@ -31,3 +31,5 @@ ubuntu-xxx:
 	echo "#Users can shutdown" | (EDITOR="tee -a" visudo)
 	echo "%users ALL =NOPASSWD: /sbin/poweroff,/sbin/shutdown,/sbin/reboot" | (EDITOR="tee -a" visudo)
 
+wheel:
+	echo "%wheel ALL=(ALL) ALL" | (EDITOR="tee -a" visudo)
