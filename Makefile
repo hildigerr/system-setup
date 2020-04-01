@@ -4,7 +4,10 @@ HOSTNAME=Calgacus
 IP_ADR=127.0.0.1
 
 arch: umask usergroups wheel timezone localization network
+	echo -e "\n[hildigerr]\nSigLevel = Optional TrustAll" \
+	"\nServer = https://hildigerr.github.io/arch-repo/x86_64" >> /etc/pacman.conf
 	@echo "Next Steps:"
+	@echo "  pacman -Sy"
 	@echo "  Set root passwd"
 	@echo "  pacman -S grub efibootmgr intel-ucode && make grub"
 	@echo "  pacman -S dhcpcd && make dhcp-start"
