@@ -4,6 +4,8 @@ HOSTNAME=Calgacus
 IP_ADR=127.0.0.1
 
 arch: umask usergroups wheel timezone localization network
+	@echo "Next Steps:"
+	@echo "  Set root passwd"
 
 timezone:
 	ln -sf "$TIMEZONE" /etc/localtime
