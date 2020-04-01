@@ -7,6 +7,7 @@ arch: umask usergroups wheel timezone localization network
 	@echo "Next Steps:"
 	@echo "  Set root passwd"
 	@echo "  pacman -S grub efibootmgr intel-ucode && make grub"
+	@echo "  pacman -S dhcpcd && make dhcp-start"
 
 grub:
 	grub-install --target=x86_64-efi --efi-directory=efi --bootloader-id=GRUB
@@ -26,6 +27,9 @@ network:
 	echo "$IP_ADR localhost" >> /etc/hosts
 	echo "::1 localhost" >> /etc/hosts
 	echo "$IP_ADR $HOSTNAME.localdomain $HOSTNAME" >> /etc/hosts
+
+dhcp-start:
+	systemctl start dhcpcd.service
 
 ubuntu: usergroups-ubuntu ubuntu-xxx
 	add-apt-repository ppa:moonsdad/ppa
