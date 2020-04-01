@@ -6,6 +6,11 @@ IP_ADR=127.0.0.1
 arch: umask usergroups wheel timezone localization network
 	@echo "Next Steps:"
 	@echo "  Set root passwd"
+	@echo "  pacman -S grub efibootmgr intel-ucode && make grub"
+
+grub:
+	grub-install --target=x86_64-efi --efi-directory=efi --bootloader-id=GRUB
+	grub-mkconfig -o /boot/grub/grub.cfg
 
 timezone:
 	ln -sf "$TIMEZONE" /etc/localtime
