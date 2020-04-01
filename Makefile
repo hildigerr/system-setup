@@ -1,7 +1,9 @@
 TIMEZONE=/usr/share/zoneinfo/US/Pacific
 LOCALE=en_US
+HOSTNAME=Calgacus
+IP_ADR=127.0.0.1
 
-arch: umask usergroups wheel timezone localization
+arch: umask usergroups wheel timezone localization network
 
 timezone:
 	ln -sf "$TIMEZONE" /etc/localtime
@@ -12,6 +14,11 @@ localization:
 	locale-gen
 	echo "LANG=$LOCALE.UTF-8" > /etc/locale.conf
 
+network:
+	echo $HOSTNAME > /etc/hostname
+	echo "$IP_ADR localhost" >> /etc/hosts
+	echo "::1 localhost" >> /etc/hosts
+	echo "$IP_ADR $HOSTNAME.localdomain $HOSTNAME" >> /etc/hosts
 
 ubuntu: usergroups-ubuntu ubuntu-xxx
 	add-apt-repository ppa:moonsdad/ppa
