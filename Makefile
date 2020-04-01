@@ -1,5 +1,17 @@
+TIMEZONE=/usr/share/zoneinfo/US/Pacific
+LOCALE=en_US
 
-arch: umask usergroups wheel
+arch: umask usergroups wheel timezone localization
+
+timezone:
+	ln -sf "$TIMEZONE" /etc/localtime
+	hwclock --systohc
+
+localization:
+	sed -i "s/#$LOCALE.UTF-8/$LOCALE.UTF-8/" /etc/locale.gen
+	locale-gen
+	echo "LANG=$LOCALE.UTF-8" > /etc/locale.conf
+
 
 ubuntu: usergroups-ubuntu ubuntu-xxx
 	add-apt-repository ppa:moonsdad/ppa
