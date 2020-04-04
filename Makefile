@@ -38,6 +38,9 @@ numlock:
 	echo -e "[Service]\nExecStartPost=-/bin/sh -c 'setleds -D +num < /dev/%I'" \
 	| (EDITOR=tee systemctl edit getty@.service)
 
+monitors:
+	cp 10-monitor.conf /etc/X11/xorg.conf.d/
+
 ubuntu: usergroups-ubuntu ubuntu-xxx
 	add-apt-repository ppa:moonsdad/ppa
 	apt-get purge byobu yelp #https://bugs.launchpad.net/ubuntu/+source/yelp/+bug/1404728
