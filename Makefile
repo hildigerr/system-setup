@@ -17,22 +17,22 @@ grub:
 	grub-mkconfig -o /boot/grub/grub.cfg
 
 timezone:
-	ln -sf "$TIMEZONE" /etc/localtime
+	ln -sf "${TIMEZONE}" /etc/localtime
 	hwclock --systohc
 
 localization:
-	sed -i "s/#$LOCALE.UTF-8/$LOCALE.UTF-8/" /etc/locale.gen
+	sed -i "s/#${LOCALE}.UTF-8/${LOCALE}.UTF-8/" /etc/locale.gen
 	locale-gen
-	echo "LANG=$LOCALE.UTF-8" > /etc/locale.conf
+	echo "LANG=${LOCALE}.UTF-8" > /etc/locale.conf
 
 network:
-	echo $HOSTNAME > /etc/hostname
-	echo "$IP_ADR localhost" >> /etc/hosts
+	echo ${HOSTNAME} > /etc/hostname
+	echo "${IP_ADR} localhost" >> /etc/hosts
 	echo "::1 localhost" >> /etc/hosts
-	echo "$IP_ADR $HOSTNAME.localdomain $HOSTNAME" >> /etc/hosts
+	echo "${IP_ADR} ${HOSTNAME}.localdomain ${HOSTNAME}" >> /etc/hosts
 
 dhcp-start:
-	systemctl start dhcpcd.service
+	systemctl enable dhcpcd.service
 
 numlock:
 	echo -e "[Service]\nExecStartPost=-/bin/sh -c 'setleds -D +num < /dev/%I'" \
@@ -48,8 +48,8 @@ ubuntu: usergroups-ubuntu ubuntu-xxx
 
 umask:
 	@echo "Setting default umask to 077"
-	sed -i -e "s/^UMASK.*$/UMASK\t\t077/" /etc/login.defs
-	sed -i -e "s/^umask.*$/umask 077/" /etc/profile
+	sed -i -e "s/^UMASK.*$$/UMASK\t\t077/" /etc/login.defs
+	sed -i -e "s/^umask.*$$/umask 077/" /etc/profile
 
 umask-ubuntu: umask
 	sed -i -e "s/#umask 022/#umask 077/" /etc/skel/.profile
@@ -60,10 +60,10 @@ usergroups:
 
 usergroups-ubuntu: usergroups
 	sed -i -e "s/^# GROUP=100/GROUP=100/" /etc/default/useradd
-	usermod -g users $USER
-	gpasswd -d $USER $USER
-	delgroup $USER
-	chmod -R g-w $HOME
+	usermod -g users ${USER}
+	gpasswd -d ${USER} ${USER}
+	delgroup ${USER}
+	chmod -R g-w ${HOME}
 
 ubuntu-xxx:
 	@echo "TODO: change to use UPower and ConsoleKit services" 
