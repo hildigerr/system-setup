@@ -2,6 +2,7 @@ TIMEZONE=/usr/share/zoneinfo/US/Pacific
 LOCALE=en_US
 HOSTNAME=Calgacus
 IP_ADR=127.0.0.1
+DRIVE=/dev/sda
 
 arch: umask usergroups wheel timezone localization network
 	echo -e "\n[hildigerr]\nSigLevel = Optional TrustAll" \
@@ -9,11 +10,15 @@ arch: umask usergroups wheel timezone localization network
 	@echo "Next Steps:"
 	@echo "  pacman -Sy"
 	@echo "  Set root passwd"
-	@echo "  pacman -S grub efibootmgr intel-ucode && make grub"
+	@echo "  pacman -S grub efibootmgr intel-ucode && make grub[-efi]"
 	@echo "  pacman -S dhcpcd && make dhcp-start"
 
-grub:
+grub-efi:
 	grub-install --target=x86_64-efi --efi-directory=efi --bootloader-id=GRUB
+	grub-mkconfig -o /boot/grub/grub.cfg
+
+grub:
+	grub-install ${DRIVE}
 	grub-mkconfig -o /boot/grub/grub.cfg
 
 timezone:
