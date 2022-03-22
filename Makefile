@@ -32,9 +32,8 @@ localization:
 
 network:
 	echo ${HOSTNAME} > /etc/hostname
-	echo "${IP_ADR} localhost" >> /etc/hosts
-	echo "::1 localhost" >> /etc/hosts
-	echo "${IP_ADR} ${HOSTNAME}.localdomain ${HOSTNAME}" >> /etc/hosts
+	echo "${IP_ADR} ${HOSTNAME} localhost" >> /etc/hosts
+	echo "::1 ${HOSTNAME} localhost" >> /etc/hosts
 
 dhcp-start:
 	systemctl enable dhcpcd.service
