@@ -10,8 +10,10 @@ license=('')
 depends=(
     ed
     git
+    pass
     ascii
     man-db
+    expect
     man-pages
     base-devel
     bash-completion
