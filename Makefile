@@ -76,4 +76,4 @@ ubuntu-xxx:
 	echo "%users ALL =NOPASSWD: /sbin/poweroff,/sbin/shutdown,/sbin/reboot" | (EDITOR="tee -a" visudo)
 
 wheel:
-	echo "%wheel ALL=(ALL) ALL" | (EDITOR="tee -a" visudo)
+	echo "%wheel ALL=(ALL:ALL) ALL" | (EDITOR="tee -a" visudo)
