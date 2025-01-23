@@ -12,6 +12,7 @@ arch: umask usergroups wheel timezone localization network
 	@echo "  Set root passwd"
 	@echo "  pacman -S grub efibootmgr intel-ucode && make grub[-efi]"
 	@echo "  pacman -S dhcpcd && make dhcp-start"
+	@echo "  pacman -S pipewire pipewire-alsa pipewire-pulse pipewire-jack"
 
 grub-efi:
 	grub-install --target=x86_64-efi --efi-directory=efi --bootloader-id=GRUB
@@ -37,6 +38,9 @@ network:
 
 dhcp-start:
 	systemctl enable dhcpcd.service
+
+audio-start:
+	systemctl --user enable --now pipewire pipewire-pulse
 
 numlock:
 	echo -e "[Service]\nExecStartPost=-/bin/sh -c 'setleds -D +num < /dev/%I'" \
