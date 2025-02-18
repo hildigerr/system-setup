@@ -49,6 +49,12 @@ numlock:
 monitors:
 	cp 10-monitor.conf /etc/X11/xorg.conf.d/
 
+monitors-disable-timers:
+	cp 10-serverflags.conf /etc/X11/xorg.conf.d/
+
+monitors-disable-dpms:
+	cp 10-extensions.conf /etc/X11/xorg.conf.d/
+
 ubuntu: usergroups-ubuntu ubuntu-xxx
 	add-apt-repository ppa:moonsdad/ppa
 	apt-get purge byobu yelp #https://bugs.launchpad.net/ubuntu/+source/yelp/+bug/1404728
