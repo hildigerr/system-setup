@@ -47,13 +47,13 @@ numlock:
 	| (EDITOR=tee systemctl edit getty@.service)
 
 monitors:
-	cp 10-monitor.conf /etc/X11/xorg.conf.d/
+	install -m 644 10-monitor.conf /etc/X11/xorg.conf.d/
 
 monitors-disable-timers:
-	cp 10-serverflags.conf /etc/X11/xorg.conf.d/
+	install -m 644 10-serverflags.conf /etc/X11/xorg.conf.d/
 
 monitors-disable-dpms:
-	cp 10-extensions.conf /etc/X11/xorg.conf.d/
+	install -m 644 10-extensions.conf /etc/X11/xorg.conf.d/
 
 mount-rule:
 	install -o root -g polkitd -m 644 50-udisks-mount.rules /etc/polkit-1/rules.d/
