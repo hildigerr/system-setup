@@ -55,6 +55,9 @@ monitors-disable-timers:
 monitors-disable-dpms:
 	cp 10-extensions.conf /etc/X11/xorg.conf.d/
 
+mount-rule:
+	install -o root -g polkitd -m 644 50-udisks-mount.rules /etc/polkit-1/rules.d/
+
 ubuntu: usergroups-ubuntu ubuntu-xxx
 	add-apt-repository ppa:moonsdad/ppa
 	apt-get purge byobu yelp #https://bugs.launchpad.net/ubuntu/+source/yelp/+bug/1404728
