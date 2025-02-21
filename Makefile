@@ -12,7 +12,7 @@ arch: umask usergroups wheel timezone localization network
 	@echo "  Set root passwd"
 	@echo "  pacman -S grub efibootmgr intel-ucode && make grub[-efi]"
 	@echo "  pacman -S dhcpcd && make dhcp-start"
-	@echo "  pacman -S pipewire pipewire-alsa pipewire-pulse pipewire-jack"
+	@echo "  make auido-install && make audio-start"
 
 grub-efi:
 	grub-install --target=x86_64-efi --efi-directory=efi --bootloader-id=GRUB
@@ -38,6 +38,10 @@ network:
 
 dhcp-start:
 	systemctl enable dhcpcd.service
+
+audio-install:
+	pacman -S pipewire
+	pacman -S --asdeps pipewire-alsa pipewire-pulse pipewire-jack rtkit
 
 audio-start:
 	systemctl --user enable --now pipewire pipewire-pulse
