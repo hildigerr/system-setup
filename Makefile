@@ -12,6 +12,7 @@ arch: umask usergroups wheel timezone localization network
 	@echo "  Set root passwd"
 	@echo "  pacman -S grub efibootmgr intel-ucode && make grub[-efi]"
 	@echo "  pacman -S dhcpcd && make dhcp-start"
+	@echo "  pacman -S nss-mdns && make avahi-dns"
 	@echo "  make auido-install && make audio-start"
 
 grub-efi:
@@ -35,6 +36,11 @@ network:
 	echo ${HOSTNAME} > /etc/hostname
 	echo "${IP_ADR} ${HOSTNAME} localhost" >> /etc/hosts
 	echo "::1 ${HOSTNAME} localhost" >> /etc/hosts
+
+avahi-dns:
+	sed -i '/^hosts:/s/^/#/' /etc/nsswitch.conf
+	sed -i '/^#hosts:/a hosts: files mdns_minimal [NOTFOUND=return] dns' /etc/nsswitch.conf
+	systemctl enable avahi-daemon.service
 
 dhcp-start:
 	systemctl enable dhcpcd.service
