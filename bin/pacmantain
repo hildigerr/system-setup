@@ -53,3 +53,12 @@ for each in ${pkgs_needing_verification}; do
     bash --rcfile <(echo "$rcsub")
 done
 
+
+echo "Searching for orphaned packages:"
+pkgs_orphaned=$(pacman -Qdtq)
+for each in ${pkgs_orphaned}; do
+    pacman -Qi $each
+    rcsub=$(rcgen "$each" "/dev/null")
+    bash --rcfile <(echo "$rcsub")
+done
+
