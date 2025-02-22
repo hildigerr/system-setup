@@ -5,6 +5,7 @@ state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/pacman"
 mkdir -p "${state_dir}"
 touch "${state_dir}/verified_optional_only_ok.lst"
 touch "${state_dir}/verified_explicit_dependencies.lst"
+touch "${state_dir}/verified_explicit_installs.lst"
 
 rcgen() {
   #echo "PS1='\\u@\\h:${1}\\$ ';whitelist(){ echo \"${1}\" >> \"${2}\"; }"
@@ -59,6 +60,20 @@ pkgs_orphaned=$(pacman -Qdtq)
 for each in ${pkgs_orphaned}; do
     pacman -Qi $each
     rcsub=$(rcgen "$each" "/dev/null")
+    bash --rcfile <(echo "$rcsub")
+done
+
+
+echo "Verify other installed packages still wanted:"
+whitelist_file="${state_dir}/verified_explicit_installs.lst"
+pkgs_installed=$(pacman -Qetq)
+pkgs_needing_verification=$(sort \
+    <(echo "$pkgs_installed")\
+    "$whitelist_file" | uniq -u)
+
+for each in ${pkgs_needing_verification}; do
+    pacman -Qi $each
+    rcsub=$(rcgen "$each" "$whitelist_file")
     bash --rcfile <(echo "$rcsub")
 done
 
