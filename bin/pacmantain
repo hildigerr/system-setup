@@ -17,6 +17,8 @@ rcgen() {
 }
 
 verify() {
+  pkgs_needing_verification=$(sort <(echo "$1")\
+      "$whitelist_file" | uniq -u)
   for each in ${pkgs_needing_verification}; do
       pacman -Qi $each
       rcsub=$(rcgen "$each" "$whitelist_file")
@@ -32,11 +34,7 @@ pkgs_installed_asdeps_only=$(pacman -Qi ${pkgs_installed_asdeps} | awk '
     /^Name/ {name=$3}
     /^Required By/ {if ($4 == "None") {print name}}
 ')
-pkgs_needing_verification=$(sort \
-    <(echo "$pkgs_installed_asdeps_only")\
-    "$whitelist_file" | uniq -u)
-
-verify
+verify "$pkgs_installed_asdeps_only"
 
 
 echo "Verify explicitly installed packages that are dependencies:"
@@ -46,11 +44,7 @@ pkgs_installed_explicit_aredeps=$(pacman -Qi ${pkgs_installed_explicitly} | awk 
     /^Name/ {name=$3}
     /^Required By/ {if ($4 != "None") {print name}}
 ')
-pkgs_needing_verification=$(sort \
-    <(echo "$pkgs_installed_explicit_aredeps")\
-    "$whitelist_file" | uniq -u)
-
-verify
+verify "$pkgs_installed_explicit_aredeps"
 
 
 echo "Searching for orphaned packages:"
@@ -65,9 +59,5 @@ done
 echo "Verify other installed packages still wanted:"
 whitelist_file="${state_dir}/verified_explicit_installs.lst"
 pkgs_installed=$(pacman -Qetq)
-pkgs_needing_verification=$(sort \
-    <(echo "$pkgs_installed")\
-    "$whitelist_file" | uniq -u)
-
-verify
+verify "$pkgs_installed"
 
