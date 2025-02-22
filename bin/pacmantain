@@ -3,6 +3,7 @@
 #pkgs_installed_all=$(expac -Q '%n')
 state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/pacman"
 mkdir -p "${state_dir}"
+touch "${state_dir}/verified_orphans_ok.lst"
 touch "${state_dir}/verified_optional_only_ok.lst"
 touch "${state_dir}/verified_explicit_dependencies.lst"
 touch "${state_dir}/verified_explicit_installs.lst"
@@ -48,12 +49,9 @@ verify "$pkgs_installed_explicit_aredeps"
 
 
 echo "Searching for orphaned packages:"
+whitelist_file="${state_dir}/verified_orphans_ok.lst"
 pkgs_orphaned=$(pacman -Qdtq)
-for each in ${pkgs_orphaned}; do
-    pacman -Qi $each
-    rcsub=$(rcgen "$each" "/dev/null")
-    bash --rcfile <(echo "$rcsub")
-done
+verify "$pkgs_orphaned"
 
 
 echo "Verify other installed packages still wanted:"
