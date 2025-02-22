@@ -16,6 +16,14 @@ rcgen() {
   "
 }
 
+verify() {
+  for each in ${pkgs_needing_verification}; do
+      pacman -Qi $each
+      rcsub=$(rcgen "$each" "$whitelist_file")
+      bash --rcfile <(echo "$rcsub")
+  done
+}
+
 
 echo "Verify packages installed that are only optional:"
 whitelist_file="${state_dir}/verified_optional_only_ok.lst"
@@ -28,11 +36,7 @@ pkgs_needing_verification=$(sort \
     <(echo "$pkgs_installed_asdeps_only")\
     "$whitelist_file" | uniq -u)
 
-for each in ${pkgs_needing_verification}; do
-    pacman -Qi $each
-    rcsub=$(rcgen "$each" "$whitelist_file")
-    bash --rcfile <(echo "$rcsub") #<(echo "PS1='\u@\h:${each}\$ '")
-done
+verify
 
 
 echo "Verify explicitly installed packages that are dependencies:"
@@ -46,11 +50,7 @@ pkgs_needing_verification=$(sort \
     <(echo "$pkgs_installed_explicit_aredeps")\
     "$whitelist_file" | uniq -u)
 
-for each in ${pkgs_needing_verification}; do
-    pacman -Qi $each
-    rcsub=$(rcgen "$each" "$whitelist_file")
-    bash --rcfile <(echo "$rcsub")
-done
+verify
 
 
 echo "Searching for orphaned packages:"
@@ -69,9 +69,5 @@ pkgs_needing_verification=$(sort \
     <(echo "$pkgs_installed")\
     "$whitelist_file" | uniq -u)
 
-for each in ${pkgs_needing_verification}; do
-    pacman -Qi $each
-    rcsub=$(rcgen "$each" "$whitelist_file")
-    bash --rcfile <(echo "$rcsub")
-done
+verify
 
