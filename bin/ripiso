@@ -1,3 +1,4 @@
 #!/bin/bash
 
-dd if=/dev/cdrom of=${1:-/tmp/dump}.iso conv=noerror,sync
+cdrom=/dev/sr0
+dd if="${cdrom}" of=${1:-/tmp/dump}.iso conv=noerror,sync
