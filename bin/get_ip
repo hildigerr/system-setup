@@ -1,0 +1,8 @@
+#!/usr/bin/perl -w
+
+use strict;
+use LWP::Simple;
+
+open( OFILE, ">$ENV{HOME}/Dropbox/home.txt" ) || die "opening file $!";
+print OFILE get("http://checkip.dyndns.com/");
+close( OFILE );
