@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ $# -lt 2 ]; then
+  echo "Usage: $(basename $0) ext url"
+  exit 1
+fi
+
+curl "$2" | grep -o "\"[^\" ]\\+\.${1}\"" | sort | uniq | xargs wget -nc {}
