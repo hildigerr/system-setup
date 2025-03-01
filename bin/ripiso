@@ -1,8 +1,3 @@
 #!/bin/bash
 
-if [ $# -lt 1 ]
-    then
-        echo "Usage: $0 name"
-    else
-       dd if=/dev/cdrom of=$1.iso conv=noerror,sync
-fi
+dd if=/dev/cdrom of=${1:-/tmp/dump}.iso conv=noerror,sync
