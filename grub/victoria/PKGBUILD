@@ -1,0 +1,30 @@
+# Maintainer: Hildigerr Vergaray <Maintainer at YmirSystems dot com>
+
+pkgname=grub-theme-victoria
+pkgver=1
+pkgrel=1
+pkgdesc="Simple steampunk grub theme"
+url=""
+arch=('any')
+license=('custom')
+depends=('grub')
+source=(
+  grub_bg.png
+  README
+  theme.txt
+  toroid_mono_16.pf2
+)
+md5sums=(
+  ffa124d1617ab2ee73de332c76e4c83d
+  ff2d04b732386bbc867713d3798ce31b
+  e3ef5a7b30db4f268ddde4b7d20675ca
+  224fd1ea86265ce5fa85f9e685743953
+)
+install=grub_theme.install
+package() {
+  destdir="${pkgdir}/boot/grub/themes/victoria"
+  install -dm755 "${destdir}"
+  for each in "${source[@]}"; do
+    install -m 644 "${each}" "${destdir}/${each}"
+  done
+}

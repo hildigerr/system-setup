@@ -1,0 +1,24 @@
+title-text: "Boot Menu"
+title-color: "#AD805B"
+
+desktop-image: "grub_bg.png"
+
+# Bounding Box for Menu
++ hbox {
+    left = 10%
+    top = 10%
+    width = 80%
+    height = 80%
+    id = "menu_box"
+
+    + boot_menu {
+        left = 0
+        top = 0
+        width = 100%
+        height = 100%
+        item_font = "Toroid Mono 16"
+        selected_item_font = "Toroid Mono 16"
+        item_color = "#AD805B"
+        selected_item_color = "#E3771D"
+    }
+}

@@ -1,0 +1,8 @@
+
+To enable this grub theme:
+  1. edit the file "/etc/default/grub" to include
+    GRUB_THEME="/boot/grub/themes/victoria/theme.txt"
+  2. run "grub-mkconfig -o /boot/grub/grub.cfg" with root-previlegs
+
+The creator of this theme does not remember where the background image came from. If you know, please forward information concerning it's origin and/or usage rights. It will replaced with something original upon request.
+

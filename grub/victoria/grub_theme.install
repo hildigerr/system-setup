@@ -1,0 +1,3 @@
+post_install() {
+  head -n 6 "/boot/grub/themes/victoria/README"
+}
