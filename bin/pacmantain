@@ -59,3 +59,29 @@ whitelist_file="${state_dir}/verified_explicit_installs.lst"
 pkgs_installed=$(pacman -Qetq)
 verify "$pkgs_installed"
 
+
+echo "Searching for pacnew files..."
+pacnew_files=$(find / -type f -name "*.pacnew" 2>/dev/null)
+if [ -z "${pacnew_files}" ]; then echo "None."; else
+  echo "${pacnew_files}"
+  IFS=$'\n' read -r -d '' -a pacnew_file_array <<< "${pacnew_files}"
+  for each in "${pacnew_file_array[@]}"; do
+    read -s -n 1 -p "Do you want to meld \"${each}\" (y/n)? " barf_q </dev/tty && echo
+    if [ "${barf_q}" = 'y' ] || [ "${barf_q}" = 'Y' ] ; then
+      sudo -E meld "${each%.pacnew}"*
+    fi
+    rcsub=$(rcgen "$each" "/dev/null")
+    nudir=$(dirname "$each")
+    pushd "${nudir}" >/dev/null
+    bash --rcfile <(echo "$rcsub")
+    popd >/dev/null
+  done
+fi
+
+
+echo "Searching for pacsave files..."
+pacsave_files=$(find / -type f -name "*.pacsave" 2>/dev/null)
+if [ -z "${pacsave_files}" ]; then echo "None."; else
+  echo "${pacsave_files}"
+fi
+
