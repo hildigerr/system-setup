@@ -7,6 +7,7 @@ touch "${state_dir}/verified_orphans_ok.lst"
 touch "${state_dir}/verified_optional_only_ok.lst"
 touch "${state_dir}/verified_explicit_dependencies.lst"
 touch "${state_dir}/verified_explicit_installs.lst"
+touch "${state_dir}/verified_foreign_maintained.lst"
 
 rcgen() {
   #echo "PS1='\\u@\\h:${1}\\$ ';whitelist(){ echo \"${1}\" >> \"${2}\"; }"
@@ -58,6 +59,12 @@ echo "Verify other installed packages still wanted:"
 whitelist_file="${state_dir}/verified_explicit_installs.lst"
 pkgs_installed=$(pacman -Qetq)
 verify "$pkgs_installed"
+
+
+echo "Verify foreign packages (whitelist if personally maintained or notifications enabled):"
+whitelist_file="${state_dir}/verified_foreign_maintained.lst"
+pkgs_foreign=$(pacman -Qqm)
+verify "$pkgs_foreign"
 
 
 echo "Searching for pacnew files..."
