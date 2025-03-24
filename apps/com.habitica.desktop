@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Habitica
+Exec=xdg-open https://habitica.com/
+Icon=habitica
+Categories=Utility
