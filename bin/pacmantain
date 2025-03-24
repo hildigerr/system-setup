@@ -3,6 +3,7 @@
 #pkgs_installed_all=$(expac -Q '%n')
 state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/pacman"
 mkdir -p "${state_dir}"
+touch "${state_dir}/verified_abandoned.lst"
 touch "${state_dir}/verified_orphans_ok.lst"
 touch "${state_dir}/verified_optional_only_ok.lst"
 touch "${state_dir}/verified_explicit_dependencies.lst"
@@ -65,6 +66,16 @@ echo "Verify foreign packages (whitelist if personally maintained or notificatio
 whitelist_file="${state_dir}/verified_foreign_maintained.lst"
 pkgs_foreign=$(pacman -Qqm)
 verify "$pkgs_foreign"
+
+
+echo "Searching for abandoned packges..."
+whitelist_file="${state_dir}/verified_abandoned.lst"
+pkgs_installed_native=$(pacman -Qqn)
+pkgs_available=$(pacman -Ssq)
+pkgs_no_longer_available=$(sort <<< "$pkgs_installed_native" | comm -23 - <(sort <<< "$pkgs_available"))
+if [ -z "${pkgs_no_longer_available}" ]; then echo "None."; else
+  echo "${pkgs_no_longer_available}"
+fi
 
 
 echo "Searching for pacnew files..."
