@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=StackEdit
+Categories=Office
+Icon=stackedit.png
+Exec=xdg-open https://stackedit.io/app
