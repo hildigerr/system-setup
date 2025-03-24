@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Gemini
+Icon=google-gemini
+Exec=xdg-open https://gemini.google.com
+Categories=Utility
