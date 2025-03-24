@@ -1,0 +1,30 @@
+# Maintainer: Hildigerr Vergaray <Maintainer at YmirSystems.com>
+
+pkgname=app-menu-links
+pkgver=1
+pkgrel=1
+pkgdesc=""
+arch=('any')
+url="https://specifications.freedesktop.org/desktop-entry-spec/latest/"
+license=('LGPL')
+depends=('xdg-utils')
+makedepends=()
+optdepends=()
+
+source=(
+  "com.google.calendar.desktop"
+  "com.google.docs.desktop"
+  "https://upload.wikimedia.org/wikipedia/commons/8/8e/Oxygen-actions-im-google.svg"
+)
+sha256sums=(
+  '5909b2d23a185ee296001cc1abb7fee7bffcd2aebce94dc5f787d7d7910160f8'
+  '605096f9b985c3e46ebf041b96a01ce32c94142c9eb58294a2eaffad75c1c572'
+  '1620dcc946408b788d07b64cd66ecb7b1d6e97146a40e6c8d0893ea8e664ccc4'
+)
+
+package() {
+  install -Dm644 "$srcdir/com.google.calendar.desktop" "$pkgdir/usr/share/applications/com.google.calendar.desktop"
+  install -Dm644 "$srcdir/com.google.docs.desktop" "$pkgdir/usr/share/applications/com.google.docs.desktop"
+  install -Dm644 "$srcdir/Oxygen-actions-im-google.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/oxygen-google.svg"
+}
+

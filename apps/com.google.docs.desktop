@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Icon=oxygen-google.svg
+Exec=xdg-open https://docs.google.com/
+Categories=Office
+Name=Google Docs
