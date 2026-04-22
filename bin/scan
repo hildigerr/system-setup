@@ -1,0 +1,32 @@
+#!/bin/sh
+OUT=${1:-output}
+TMP_DIR="/tmp/scan_$(date +%s)"
+PAGE=1
+
+mkdir -p "$TMP_DIR"
+
+while true; do
+  printf "Place page %d on the glass and press Enter to scan (or type 'q' to finish): " "$PAGE"
+  read -r input
+  if [ "$input" = "q" ]; then break; fi
+
+  scanimage -d 'airscan' \
+            --mode 'Color' \
+            --resolution 300 \
+            --format=tiff > "${TMP_DIR}/page-$(printf "%03d" "$PAGE").tiff"
+
+  if [ $? -ne 0 ]; then
+    printf "Scan failed on page %d. Please check the connection.\n" "$PAGE"
+    exit 1
+  fi
+
+  PAGE=$((PAGE + 1))
+done
+
+if [ "$PAGE" -gt 1 ]; then
+  tiffcp "${TMP_DIR}/page-"*.tiff "${TMP_DIR}/all_pages.tiff"
+  tiff2pdf -o "${OUT}.pdf" "${TMP_DIR}/all_pages.tiff"
+  printf "Saved to %s.pdf\n" "${OUT}"
+else
+  printf "No pages scanned.\n"
+fi
