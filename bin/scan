@@ -2,24 +2,47 @@
 OUT=${1:-output}
 TMP_DIR="/tmp/scan_$(date +%s)"
 PAGE=1
+RESULT=0
 
 mkdir -p "$TMP_DIR"
 
 while true; do
-  printf "Place page %d on the glass and press Enter to scan (or type 'q' to finish): " "$PAGE"
+  printf "\nCurrent Page: %d\n" "$PAGE"
+  printf "Select input: [f]latbed, [a]df, or [q]uit and compile: "
   read -r input
-  if [ "$input" = "q" ]; then break; fi
 
-  scanimage -d 'airscan' \
+  case "$input" in
+    f|flatbed)
+      # Single page from flatbed
+      scanimage -d 'airscan' \
             --mode 'Color' \
             --resolution 300 \
             --format=tiff > "${TMP_DIR}/page-$(printf "%03d" "$PAGE").tiff"
+      RESULT = $?
+      ;;
 
-  if [ $? -ne 0 ]; then
+    a|adf)
+      # Batch scan from ADF
+      scanimage --source 'ADF' \
+            --mode 'Color' \
+            --resolution 300 \
+            --batch="$TMP_DIR/page-%03d.tiff" \
+            --batch-start="$PAGE" \
+            --format=tiff
+      RESULT = $?
+      ;;
+
+    q|quit) break ;;
+    *) printf "Invalid selection.\n" ;;
+  esac
+
+  if [ RESULT -ne 0 ]; then
     printf "Scan failed on page %d. Please check the connection.\n" "$PAGE"
-    exit 1
+    exit RESULT
   fi
 
+  # Update PAGE count based on how many files are now in TMP_DIR
+  PAGE=$(ls -1 "$TMP_DIR"/page-*.tiff | wc -l)
   PAGE=$((PAGE + 1))
 done
 
