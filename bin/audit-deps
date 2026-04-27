@@ -1,0 +1,40 @@
+#!/bin/sh
+
+set -eu
+
+[ $# -eq 1 ] || { echo "usage: $0 <executable>" >&2; exit 1; }
+
+exe=$(command -v -- "$1") || {
+  echo "error: '$1' not found in PATH" >&2
+  exit 1
+}
+
+# package owning the executable
+owner_pkg=$(pacman -Qo "$exe" 2>/dev/null | awk '{print $5}')
+
+# base dependencies (meta package)
+base_pkgs=$(
+  pacman -Qi base 2>/dev/null |
+  awk -F': *' '/^Depends On/ {
+    gsub(/  +/, " ", $2)
+    for (i=1; i<=NF; i++);
+    split($2, a, " ")
+    for (i in a) if (a[i] != "None") print a[i]
+  }'
+)
+
+exclude_pkgs=$(printf '%s\n%s\n' "$base_pkgs" "$owner_pkg" | sort -u)
+
+ldd "$exe" 2>/dev/null |
+awk '
+  /=>/ { if ($3 ~ /^\//) print $3 }
+  /^[[:space:]]*\// { print $1 }
+' |
+sort -u |
+while IFS= read -r lib; do
+  owner=$(pacman -Qo "$lib" 2>/dev/null | awk '{print $5}') || continue
+
+  if ! printf '%s\n' $exclude_pkgs | grep -qx -- "$owner"; then
+    printf '%s\n' "$owner"
+  fi
+done | sort -u
