@@ -1,0 +1,26 @@
+#!/bin/bash
+# Checks all executable commands in $PATH directories to see if they have a man page.
+# Commands without a man page are printed to standard output.
+
+# Use IFS=':' to split the $PATH variable by the colon delimiter
+IFS=':' read -ra PATH_DIRS <<< "$PATH"
+
+# Iterate over each directory in the split PATH array
+for dir in "${PATH_DIRS[@]}"; do
+    # Ensure the directory exists and is actually a directory
+    if [[ -d "$dir" ]]; then
+        # Find all executable files (-type f -executable) in the current directory
+        # -maxdepth 1 ensures we only check the current directory, not subdirectories
+        # -print0 and 'while IFS= read -r -d $'\0' file' handles filenames with spaces safely
+        find "$dir" -maxdepth 1 -type f -executable -print0 2>/dev/null | while IFS= read -r -d $'\0' file; do
+            command_name=$(basename "$file")
+            # Check for the man page existence using 'man -w'.
+            # man -w prints the path to the man file if it exists, otherwise it fails.
+            # We redirect output to /dev/null and check the exit status.
+            if ! man -w "$command_name" >/dev/null 2>&1; then
+                echo "$command_name"
+            fi
+        done
+    fi
+done
+
