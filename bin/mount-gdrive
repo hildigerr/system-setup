@@ -1,0 +1,13 @@
+#!/bin/sh
+
+for dir in "${HOME}/Drive/"*; do
+  if [ -d "$dir" ]; then
+
+    name=$(basename "$dir")
+
+    rclone mount gdrive-${name}: "${dir}" --daemon \
+      --log-file="${HOME}/.local/var/log/rclone-mount-gdrive-${name}.log" \
+      --vfs-cache-mode full
+#      --vfs-read-chunk-size 0 \
+  fi
+done
