@@ -8,22 +8,16 @@ exe=$(command -v -- "$1") || {
   echo "error: '$1' not found in PATH" >&2
   exit 1
 }
+echo "Auditing: $exe"
+
+deprecated='gcc-libs'
 
 # package owning the executable
 owner_pkg=$(pacman -Qo "$exe" 2>/dev/null | awk '{print $5}')
+echo "Owned By: $owner_pkg"
 
-# base dependencies (meta package)
-base_pkgs=$(
-  pacman -Qi base 2>/dev/null |
-  awk -F': *' '/^Depends On/ {
-    gsub(/  +/, " ", $2)
-    for (i=1; i<=NF; i++);
-    split($2, a, " ")
-    for (i in a) if (a[i] != "None") print a[i]
-  }'
-)
-
-exclude_pkgs=$(printf '%s\n%s\n' "$base_pkgs" "$owner_pkg" | sort -u)
+exclude_pkgs=$(printf '%s\n%s\n' "base" "$owner_pkg" | sort -u)
+echo "Needs:"
 
 ldd "$exe" 2>/dev/null |
 awk '
@@ -34,7 +28,27 @@ sort -u |
 while IFS= read -r lib; do
   owner=$(pacman -Qo "$lib" 2>/dev/null | awk '{print $5}') || continue
 
-  if ! printf '%s\n' $exclude_pkgs | grep -qx -- "$owner"; then
-    printf '%s\n' "$owner"
+  req_by=$(
+    pacman -Qi "$owner" 2>/dev/null |
+    awk -F': *' '/^Required By/ {
+      if ($2 == "None") next
+      gsub(/  +/, " ", $2)
+      split($2, a, " ")
+      for (i in a) print a[i]
+    }' | grep -vx "$deprecated"
+  )
+
+  # decision: is it already satisfied?
+  satisfied=0
+  for r in $req_by; do
+    if printf '%s\n' $exclude_pkgs | grep -qx -- "$r"; then
+      satisfied=1
+      break
+    fi
+  done
+
+  if [ "$satisfied" -eq 0 ]; then
+    printf '\t%s\n' "$owner"
+    exclude_pkgs=$(printf '%s\n%s\n' "$exclude_pkgs" "$owner" | sort -u)
   fi
 done | sort -u
