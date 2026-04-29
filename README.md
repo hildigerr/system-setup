@@ -71,6 +71,7 @@ The `bin` directory contains various scripts, primarily for system maintenance.
 | `ripiso`       | Backup to ISO file                                         |
 | `scan`         | Continuously scan a document from ADF and/or flatbed until done |
 | `scrape`       | Retrieve all files with a specified extension from a target URL |
+| `todo`         | Search for and display plans and todo lists                |
 
 ## Grub Themes
 The `grub` directory contains grub themes:
