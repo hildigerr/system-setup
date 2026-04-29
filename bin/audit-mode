@@ -2,19 +2,22 @@
 
 # Default
 mask="077"
+strict=false
 
 usage() {
   cat <<EOF
-Usage: $0 [-u MASK] [DIRECTORY...]
+Usage: $0 [-u MASK] [-s] [DIRECTORY...]
   Recursively scan each DIRECTORY (default: current directory)
 and list entries whose permissions do not match MASK (default: $mask).
+  -s  Strict mode (require exact match; default is 'do not exceed')
 EOF
   exit 1
 }
 
-while getopts "u:" opt; do
+while getopts "u:s" opt; do
   case "$opt" in
     u) mask="$OPTARG" ;;
+    s) strict=true ;;
     *) usage ;;
   esac
 done
@@ -42,7 +45,14 @@ for each in "$@"; do
 
       # Identify items NOT matching the ideal permissions
       current_mode=$(stat -c "%a" "$path")
-      if [ "$current_mode" != "$ideal" ]; then
+      mismatch=false
+      if $strict; then
+        [ "$current_mode" != "$ideal" ] && mismatch=true
+      elif [ $(( 0$current_mode & 0$mask )) -ne 0 ]; then
+        mismatch=true
+      fi
+      if $mismatch; then
+        #printf "[%s:(%s&%s)=%03o] " "$ideal" "$mask" "$current_mode" "$(( 0$current_mode & 0$mask ))" #BARF
         printf "%s %s %s %s\n"  "$mode" "$user" "$group" "$path"
       fi
     done
