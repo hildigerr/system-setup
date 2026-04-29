@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# Default
+mask="077"
+
+usage() {
+  cat <<EOF
+Usage: $0 [-u MASK] [DIRECTORY...]
+  Recursively scan each DIRECTORY (default: current directory)
+and list entries whose permissions do not match MASK (default: $mask).
+EOF
+  exit 1
+}
+
+while getopts "u:" opt; do
+  case "$opt" in
+    u) mask="$OPTARG" ;;
+    *) usage ;;
+  esac
+done
+shift $((OPTIND-1))
+if [ $# -eq 0 ]; then set -- "$@" "${PWD:-$(pwd -P)}"; fi
+
+for each in "$@"; do
+  if [ ! -d "$each" ]; then
+    printf "$0 Error: '%s' is not a directory.\n" "$each" >&2
+    continue
+  fi
+
+  find "$each" -exec ls -ld '{}' + | {
+    while read -r mode links user group size month day time path; do
+
+      # Skip symbolic links (link target handles its own permissions)
+      [ -L "$path" ] && continue
+
+      # Calculate ideal permissions: (Full access) AND NOT (umask)
+      if [ -d "$path" ]; then
+        ideal="$(printf "%03o" $((0777 & ~0$mask)))"
+      else
+        ideal="$(printf "%03o" $((0666 & ~0$mask)))"
+      fi
+
+      # Identify items NOT matching the ideal permissions
+      current_mode=$(stat -c "%a" "$path")
+      if [ "$current_mode" != "$ideal" ]; then
+        printf "%s %s %s %s\n"  "$mode" "$user" "$group" "$path"
+      fi
+    done
+  }     
+done
+

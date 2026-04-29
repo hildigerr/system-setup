@@ -65,6 +65,7 @@ The `bin` directory contains various scripts, primarily for system maintenance.
 | -------------- | ---------------------------------------------------------- |
 | `audit-deps`   | Audit an executable's dependencies for what should replace one that is deprecated |
 | `audit-man`    | List all commands in the *$PATH* that do not have man pages |
+| `audit-mode`   | Find files with non-ideal permissions                      |
 | `get_ip`       | Extract the current IP address into a [Dropbox](https://www.dropbox.com/) file |
 | `mount-gdrive` | Mount Google drive(s) via [Rclone](https://rclone.org/)    |
 | `pacmaintain`  | [Audit installed packages](https://wiki.archlinux.org/title/Pacman/Tips_and_tricks) for [installation reason](https://wiki.archlinux.org/title/Pacman#Installation_reason), orphans, and becoming abandoned; also assist processing `pacnew` and `pacsave` files |
