@@ -1,13 +1,11 @@
 #!/bin/sh
 
-DEPTH=1
-
 fail() { echo "ERROR: $1"; exit 1; }
 barf() { echo -e "\e[1m$1:\n\e[0m$(cat $1)"; }
 
 while getopts "d:" opt; do
   case "${opt}" in
-    d) DEPTH=${OPTARG} ;;
+    d) DEPTH="-maxdepth ${OPTARG}" ;;
   esac
 done
 shift $((OPTIND-1))
@@ -18,7 +16,7 @@ for dir in "$@"; do
   if [ ! -d "${dir}" ]; then fail "not a directory: \"$dir\""; fi
   if [ -f "${dir}/.plan" ]; then barf "${dir}/.plan" ; fi
   for each in \
-    $(find "${dir}" -maxdepth "${DEPTH}" -type f -name '[Tt][Oo][Dd][Oo]*'); do
+    $(find 2>/dev/null "${dir}" ${DEPTH} -type f -name '[Tt][Oo][Dd][Oo]*'); do
       barf "${each}"
   done
 done
